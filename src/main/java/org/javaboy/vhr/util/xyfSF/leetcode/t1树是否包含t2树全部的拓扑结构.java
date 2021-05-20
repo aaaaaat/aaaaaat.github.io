@@ -1,4 +1,4 @@
-package org.javaboy.vhr.util;
+package org.javaboy.vhr.util.xyfSF.leetcode;
 
 public class t1树是否包含t2树全部的拓扑结构 {
     //给定彼此独立的两棵树头节点分别为t1和t2，判断t1树是否包含t2树全部的拓扑结构

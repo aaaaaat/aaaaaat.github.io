@@ -1,4 +1,4 @@
-package org.javaboy.vhr.util;
+package org.javaboy.vhr.util.xyfSF.leetcode;
 
 public class 判断是否为平衡二叉树 {
     //平衡二叉树的性质：要么是一棵空树，要么任何一个节点的左右子树高度差的绝对值不超过1。

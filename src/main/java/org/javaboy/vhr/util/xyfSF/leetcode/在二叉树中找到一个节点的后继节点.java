@@ -1,4 +1,4 @@
-package org.javaboy.vhr.util;
+package org.javaboy.vhr.util.xyfSF.leetcode;
 
 public class 在二叉树中找到一个节点的后继节点 {
 

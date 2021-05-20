@@ -1,4 +1,4 @@
-package org.javaboy.vhr.util;
+package org.javaboy.vhr.util.xyfSF.leetcode;
 
 public class 二叉树中找到两个节点的最近公共祖先 {
     public class Node {
