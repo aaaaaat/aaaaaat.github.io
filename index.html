@@ -92,7 +92,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">my-first-blog</a>
+      <a class="p-name article-title" href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">MYSQL事务小记</a>
     </h1>
   
 
@@ -127,16 +127,13 @@
 <p>当前值是 4，但是在查询这条记录的时候，不同时刻启动的事务会有不同的 read-view。如图中看到的，在视图 A、B、C 里面，这一个记录的值分别是 1、2、4，同一条记录在系统中可以存在多个版本，就是数据库的多版本并发控制（MVCC）。<strong>对于 read-view A，要得到 1，就必须将当前值依次执行图中所有的回滚操作得到。</strong></p>
 <p>同时你会发现，<strong>即使现在有另外一个事务正在将 4 改成 5，这个事务跟 read-view A、B、C 对应的事务是不会冲突的。</strong></p>
 <p>你一定会问，回滚日志总不能一直保留吧，什么时候删除呢？答案是，在不需要的时候才删除。也就是说，系统会判断，当没有事务再需要用到这些回滚日志时，回滚日志会被删除（<strong>当没有比回滚日志更早的读视图（读视图在事务开启时创建）的时候，这个数据不会再有谁驱使它回滚了，这个回滚日志也就失去了用武之地，可以删除了</strong>）</p>
-<p>什么时候才不需要了呢？就是当系统里没有比这个回滚日志更早的 read-view 的时候。<br>基于上面的说明，我们来讨论一下为什么建议你尽量不要使用长事务。<br>长事务意味着系统里面会存在很老的事务视图。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
-<h3 id="–-gt-事务的启动方式"><a href="#–-gt-事务的启动方式" class="headerlink" title="–&gt;事务的启动方式"></a>–&gt;事务的启动方式</h3><p>MySQL 的事务启动方式有以下几种：</p>
-<p>1、显式启动事务语句， begin 或 start transaction。配套的提交语句是 commit，回滚语句是 rollback。<br>2、set autocommit=0，这个命令会将这个线程的自动提交关掉。意味着<strong>如果你只执行一个 select 语句，这个事务就启动了，而且并不会自动提交</strong>。这个事务持续存在直到你主动执行 commit 或 rollback 语句，或者断开连接。</p>
-<p><strong>在 autocommit 为 1 的情况下，表示MySQL自动开启和提交事务。 比如执行一个update语句，语句只完成后就自动提交了</strong>。不需要显示的使用begin、commit来开启和提交事务。 所以，当我们需要对某些操作使用事务的时候，手动的用begin、commit来开启和提交事务。</p>
-<p>在 autocommit 为 1 的情况下，用 begin 显式启动的事务，如果执行 commit 则提交事务。如果执行 commit work and chain，则是提交事务并自动启动下一个事务，这样也省去了再次执行 begin 语句的开销。同时带来的好处是从程序开发的角度明确地知道每个语句是否处于事务中。</p>
+<p>什么时候才不需要了呢？就是当系统里没有比这个回滚日志更早的 read-view 的时候。</p>
+<h3 id="为什么尽量不要使用长事务？"><a href="#为什么尽量不要使用长事务？" class="headerlink" title="为什么尽量不要使用长事务？"></a>为什么尽量不要使用长事务？</h3><p>长事务意味着系统里面会存在很老的事务视图。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" data-id="ckpc4k6fi00017s0thpuz3bpx" data-title="my-first-blog" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" data-id="ckpc500wq00011i0t9db7hq35" data-title="MYSQL事务小记" class="article-share-link">分享</a>
       
       
       
@@ -179,7 +176,7 @@
       <ul>
         
           <li>
-            <a href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">my-first-blog</a>
+            <a href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">MYSQL事务小记</a>
           </li>
         
       </ul>
