@@ -1,329 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>HashMap | 小胖的博客</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="摘要">
-<meta property="og:type" content="article">
-<meta property="og:title" content="HashMap">
-<meta property="og:url" content="http://example.com/2021/05/04/Redis/index/index.html">
-<meta property="og:site_name" content="小胖的博客">
-<meta property="og:description" content="摘要">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2021/05/31/Z2y7aOv4GIJBXMH.png">
-<meta property="og:image" content="https://i.loli.net/2021/05/31/GSOu5roHPDx6zp9.png">
-<meta property="article:published_time" content="2021-05-04T04:57:40.000Z">
-<meta property="article:modified_time" content="2021-05-31T08:21:02.454Z">
-<meta property="article:author" content="PP">
-<meta property="article:tag" content="hashmap">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2021/05/31/Z2y7aOv4GIJBXMH.png">
-  
-    <link rel="alternate" href="/atom.xml" title="小胖的博客" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-    
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
-
-  
-  
-<link rel="stylesheet" href="/css/style.css">
-
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
-
-  
-<meta name="generator" content="Hexo 5.4.0"></head>
-
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">小胖的博客</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">记录备战秋招的点点滴滴</a>
-        </h2>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-Redis/index" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/04/Redis/index/" class="article-date">
-  <time class="dt-published" datetime="2021-05-04T04:57:40.000Z" itemprop="datePublished">2021-05-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      HashMap
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>hashMap的插入</p>
-<p>1、判空，为空初始化</p>
-<p>2、不为空，计算key的hash值，存放数组对应下标index（（n-1）%hash）</p>
-<p>3、<strong>查看table[index]是否存在数据</strong>，没有数据就构造一个Node节点放在table[index]</p>
-<p>4、存在，说明发生了<strong>hash冲突</strong>，继续判断key是否相等，相等则更新value</p>
-<p>5、<strong>如果不相等，判断是否树形节点</strong>，如果是树形节点，创建树形接待你插入红黑树中</p>
-<p>6、如果不是树形节点，创建普通Node加入链表中；并判断；<strong>链表长度是否大于8</strong>，大于的话链表转化为红黑树</p>
-<p>7、<strong>插入完成后判断当前节点数是否大于阈值</strong>，如果大于开始扩容为原数组的二倍</p>
-<p>hashMap初始化</p>
-<p>一般如果<code>new HashMap()</code> 不传值，默认大小是 16，负载因子是 0.75， 如果自己<strong>传入初始大小 k，初始化大小为大于 k 的 2 的整数次方</strong>，例如如果传 10，大小为 16（传入k=50，大小为2的6次方）。</p>
-<p>算法就是让初始二进制分别右移 1，2，4，8，16位，与自己异或，把高位第一个为 1 的数通过不断右移，把高位为 1 的后面全变为 1，111111 + 1 = 1000000  = 2的6次方（符合大于 50 并且是 2 的整数次幂 ）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static final int tableSizeFor(int cap) &#123; </span><br><span class="line">int n = cap - 1;  </span><br><span class="line">n |= n &gt;&gt;&gt; 1; </span><br><span class="line">n |= n &gt;&gt;&gt; 2; </span><br><span class="line">n |= n &gt;&gt;&gt; 4; </span><br><span class="line">n |= n &gt;&gt;&gt; 8;  </span><br><span class="line">n |= n &gt;&gt;&gt; 16; </span><br><span class="line">return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ?    MAXIMUM_CAPACITY : n + 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+{% extends '_layout.swig' %}
+{% import '_macro/post.swig' as post_template %}
+{% import '_macro/sidebar.swig' as sidebar_template %}
 
 
+{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-<p>hash函数的设计</p>
-<p> hash 函数是先拿到<strong>通过 key  的 hashcode，是 32 位的 int 值，然后让 hashcode 的高 16 位和低 16 位进行异或操作。</strong></p>
-<p>这个也叫扰动函数，这么设计有二点原因：</p>
-<p>1、一定要尽可能降低 hash 碰撞，越分散越好；</p>
-<p>key.hashCode() 函数调用的是 key 键值类型自带的哈希函数，返回 int 型散列值。int 值范围为 <strong>-2147483648~2147483647</strong>，前后加起来大概 40 亿的映射空间。只要哈希函数映射得比较均匀松散，一般应用是很难出现碰撞的。</p>
-<p>这也正好解释了为什么 HashMap 的数组长度要取 2 的整数幂。因为这样（数组长度 -1）正好相当于一个“低位掩码”。“与”操作的结果就是散列值的高位全部归零，只保留低位值，用来做数组下标访问。以初始长度 16 为例，16-1=15。2 进制表示是 00000000 00000000 00001111。和某散列值做“与”操作如下，结果就是截取了最低的四位值。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">10100101 11000100 00100101</span><br><span class="line">&amp; 00000000 00000000 00001111</span><br><span class="line">----------------------------------  </span><br><span class="line">00000000 00000000 00000101    //高位全部归零，只保留末四位</span><br></pre></td></tr></table></figure>
-
-<p>但这时候问题就来了，这样就算我的散列值分布再松散，要是只取最后几位的话，碰撞也会很严重。更要命的是如果散列本身做得不好，分布上成等差数列的漏洞，如果正好让最后几个低位呈现规律性重复，就无比蛋疼。</p>
-<p>右位移 16 位，正好是 32bit 的一半，自己的高半区和低半区做异或，就是为了混合原始哈希码的高位和低位，以此来加大低位的随机性。<strong>而且混合后的低位掺杂了高位的部分特征，这样高位的信息也被变相保留下来。</strong></p>
-<p>2、算法一定要尽可能高效，因为这是高频操作, 因此采用位运算。</p>
-<p>源码中模运算就是把散列值和数组长度 -1 做一个”与”操作，位运算比 % 运算要快。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bucketIndex = indexFor(hash, table.length);</span><br><span class="line">static int indexFor(int h, int length) &#123;     </span><br><span class="line">return h &amp; (length-1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+{% block page_class %}page-post-detail{% endblock %}
 
 
+{% block content %}
 
-<p>hashmap 1.8的优化</p>
-<p>1、<strong>数组+链表改成了数组+链表或红黑树</strong>；</p>
-<p>防止发生 hash 冲突，链表长度过长，将时间复杂度由<code>O(n)</code>降为<code>O(logn)</code>；</p>
-<p>2、链表的插入方式从头插法改成了尾插法，简单说就是插入时，如果数组位置上已经有元素，1.7 将新元素放到数组中，原始节点作为新节点的后继节点，<strong>1.8 遍历链表，将元素放置到链表的最后；</strong></p>
-<p>​       A 线程在插入节点 B，B 线程也在插入，遇到容量不够开始扩容，重新 hash，放置元素，采用头插法，后遍历到的 B 节点放入了头部，这样形成了环</p>
-<p><img src="https://i.loli.net/2021/05/31/Z2y7aOv4GIJBXMH.png" alt="上传1.png"></p>
-<p>3、扩容的时候 1.7 需要对原数组中的元素进行重新 hash 定位在新数组的位置，<strong>1.8 采用更简单的判断逻辑，位置不变或索引+旧容量大小；</strong></p>
-<p>  这是由于扩容是扩大为原数组大小的 2 倍，用于计算数组位置的掩码仅仅只   </p>
-<p>  是高位多了一个 1，举个例子：</p>
-<p>  扩容前长度为 16，用于计算 <strong>(n-1) &amp; hash</strong> 的二进制 n - 1 为 0000 1111， </p>
-<p>   <strong>扩容后为 32 后的二进制就高位多了 1，============&gt;为 0001 1111。</strong></p>
-<p><strong>因为是 &amp; 运算</strong>，<strong>1 和任何数 &amp; 都是它本身</strong>，那就分二种情况，如下图：原数据 hashcode 高位第 4 位为 0 和高位为 1 的情况；</p>
-<p>第四位高位为 0，重新 hash 数值不变，第四位为 1，重新 hash 数值比原来大 16（旧数组的容量）。</p>
-<p><img src="https://i.loli.net/2021/05/31/GSOu5roHPDx6zp9.png" alt="上传2.png"></p>
-<p>4、在插入时，1.7 先判断是否需要扩容，再插入，<strong>1.8 先进行插入，插入完成再判断是否需要扩容。</strong></p>
-<p><strong>HashMap 是线程安全的吗？</strong></p>
-<p>不是，在多线程环境下，1.7 会产生死循环、数据丢失、数据覆盖的问题，1.8 中会有<strong>数据覆盖、多线程同时扩容</strong>的问题。</p>
-<p><strong>那你平常怎么解决这个线程不安全的问题？</strong></p>
-<p>Java 中有 <strong>HashTable、Collections.synchronizedMap、以及 ConcurrentHashMap</strong> 可以实现线程安全的 Map。</p>
-<ol>
-<li>HashTable 是直接在操作方法上加 synchronized 关键字，锁住整个数组，粒度比较大；</li>
-<li>Collections.synchronizedMap 是使用 Collections 集合工具的内部类，通过传入 Map 封装出一个 SynchronizedMap 对象，内部定义了一个对象锁，方法内通过对象锁实现；</li>
-<li>ConcurrentHashMap 使用分段锁，降低了锁粒度，让并发度大大提高。</li>
-</ol>
-<p> <strong>ConcurrentHashMap 的分段锁的实现原理吗？</strong></p>
-<p>ConcurrentHashMap </p>
-<p>1、成员变量使用 volatile 修饰，免除了指令重排序，同时保证内存可见性</p>
-<p>2、另外使用 CAS 操作和 synchronized 结合实现赋值操作，多线程操作只会锁住当前操作索引的节点。</p>
-<p><strong>你前面提到链表转红黑树是链表长度达到阈值，这个阈值是多少？</strong> </p>
-<p>阈值是 8，红黑树转链表阈值为 6。</p>
-<p><strong>为什么是 8，不是 16，32 甚至是 7 ？又为什么红黑树转链表的阈值是 6，不是 8 了呢？</strong></p>
-<p>因为经过计算，在 hash 函数设计合理的情况下，<strong>发生 hash 碰撞 8 次的几率为百万分之 6</strong>，概率说话。。因为 8 够用了，至于为什么转回来是 6，<strong>因为如果 hash 碰撞次数在 8 附近徘徊，会一直发生链表和红黑树的转化，为了预防这种情况的发生。</strong></p>
-<p>1、 HashMap 内部节点是有序的吗？</p>
-<p><strong>是无序的，根据 hash 值随机插入。</strong></p>
-<p>2、那有没有有序的 Map？</p>
-<p><strong>LinkedHashMap 和 TreeMap。</strong></p>
-<p>3、 跟我讲讲 LinkedHashMap 怎么实现有序的？</p>
-<p><strong>LinkedHashMap 内部维护了一个单链表</strong>，有 头尾节点 ，</p>
-<p>同时 LinkedHashMap 节点 Entry 内部除了继承 HashMap 的 Node 属性，</p>
-<p>还<strong>有 before  和 after 用于标识前置节点和后置节点。</strong>可以实现按插入的顺序或访问顺序排序。</p>
-<p>4、跟我讲讲 TreeMap 怎么实现有序的？</p>
-<p>TreeMap 是按照 Key 的自然顺序或者 Comprator 的顺序进行排序，<strong>内部是通过红黑树来实现</strong>。所以要么 key 所属的类实现 Comparable 接口，或者自定义一个实现了 Comparator 接口的比较器，传给 TreeMap 用户 key 的比较。</p>
+  <div id="posts" class="posts-expand">
+    {{ post_template.render(page) }}
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/04/Redis/index/" data-id="ckpc61vua0001jl0t639k8ebn" data-title="HashMap" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hashmap/" rel="tag">hashmap</a></li></ul>
-
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2021/05/05/%E5%85%B3%E4%BA%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">前一篇</strong>
-      <div class="article-nav-title">
-        
-          关于虚拟机中的垃圾回收
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">MYSQL事务小记</div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">分类</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li></ul>
+    <div class="post-spread">
+      {% if theme.jiathis %}
+        {% include '_partials/share/jiathis.swig' %}
+      {% elseif theme.baidushare %}
+        {% include '_partials/share/baidushare.swig' %}
+      {% elseif theme.add_this_id %}
+        {% include '_partials/share/add-this.swig' %}
+      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
+        {% include '_partials/share/duoshuo_share.swig' %}
+      {% endif %}
     </div>
   </div>
 
+{% endblock %}
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag">Java虚拟机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hashmap/" rel="tag">hashmap</a></li></ul>
-    </div>
-  </div>
+{% block sidebar %}
+  {{ sidebar_template.render(true) }}
+{% endblock %}
 
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" style="font-size: 10px;">Java虚拟机</a> <a href="/tags/hashmap/" style="font-size: 10px;">hashmap</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2021/05/05/%E5%85%B3%E4%BA%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">关于虚拟机中的垃圾回收</a>
-          </li>
-        
-          <li>
-            <a href="/2021/05/04/Redis/index/">HashMap</a>
-          </li>
-        
-          <li>
-            <a href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">MYSQL事务小记</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2021 PP<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.4.1.min.js"></script>
-
-
-
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
-</html>
+{% block script_extra %}
+  {% include '_scripts/pages/post-details.swig' %}
+{% endblock %}
