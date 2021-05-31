@@ -78,10 +78,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-my-first-blog" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-MYSQL事务小记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/05/31/my-first-blog/" class="article-date">
-  <time class="dt-published" datetime="2021-05-31T03:29:09.000Z" itemprop="datePublished">2021-05-31</time>
+    <a href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2021-05-01T03:29:09.000Z" itemprop="datePublished">2021-05-01</time>
 </a>
     
   </div>
@@ -92,7 +92,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/31/my-first-blog/">my-first-blog</a>
+      <a class="p-name article-title" href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">my-first-blog</a>
     </h1>
   
 
@@ -123,7 +123,7 @@
 </ul>
 <p>​       顾名思义，对于同一行记录，写会加写锁，读会加读锁。当出现读写锁冲突的时候，后访问的事务必须等钱一个事务执行完成，才能继续执行</p>
 <h3 id="–-gt-事务隔离级别的实现"><a href="#–-gt-事务隔离级别的实现" class="headerlink" title="–&gt;事务隔离级别的实现"></a>–&gt;事务隔离级别的实现</h3><p>在 MySQL 中，实际上每条记录在更新的时候都会同时记录一条回滚操作。记录上的最新值，通过回滚操作，都可以得到前一个状态的值。<br>假设一个值从 1 被按顺序改成了 2、3、4，在回滚日志里面就会有类似下面的记录。</p>
-<p>![image-20210419105450131](/Users/xyf/Library/Application Support/typora-user-images/image-20210419105450131.png)</p>
+<p><img src="https://i.loli.net/2021/05/31/FDNJ5qOeC8ZpjMo.png" alt="image-20210419105450131.png"></p>
 <p>当前值是 4，但是在查询这条记录的时候，不同时刻启动的事务会有不同的 read-view。如图中看到的，在视图 A、B、C 里面，这一个记录的值分别是 1、2、4，同一条记录在系统中可以存在多个版本，就是数据库的多版本并发控制（MVCC）。<strong>对于 read-view A，要得到 1，就必须将当前值依次执行图中所有的回滚操作得到。</strong></p>
 <p>同时你会发现，<strong>即使现在有另外一个事务正在将 4 改成 5，这个事务跟 read-view A、B、C 对应的事务是不会冲突的。</strong></p>
 <p>你一定会问，回滚日志总不能一直保留吧，什么时候删除呢？答案是，在不需要的时候才删除。也就是说，系统会判断，当没有事务再需要用到这些回滚日志时，回滚日志会被删除（<strong>当没有比回滚日志更早的读视图（读视图在事务开启时创建）的时候，这个数据不会再有谁驱使它回滚了，这个回滚日志也就失去了用武之地，可以删除了</strong>）</p>
@@ -136,58 +136,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/31/my-first-blog/" data-id="ckpc2768z0002kr0t4kyrbcha" data-title="my-first-blog" class="article-share-link">分享</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/05/31/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2021-05-31T01:51:27.752Z" itemprop="datePublished">2021-05-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/05/31/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/31/hello-world/" data-id="ckpc2768t0000kr0t0gh1fcki" data-title="Hello World" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" data-id="ckpc3r6y20001vm0t4yai2gv2" data-title="my-first-blog" class="article-share-link">分享</a>
       
       
       
@@ -230,11 +179,7 @@
       <ul>
         
           <li>
-            <a href="/2021/05/31/my-first-blog/">my-first-blog</a>
-          </li>
-        
-          <li>
-            <a href="/2021/05/31/hello-world/">Hello World</a>
+            <a href="/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/">my-first-blog</a>
           </li>
         
       </ul>
