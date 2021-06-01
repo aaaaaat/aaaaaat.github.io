@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>mq小记 | 小胖的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="消息传送可靠性1、数据库表：记录发送消息（发送失败时的重试依据） 2、实体类「 msgid；&#x2F;&#x2F;消息id Empid;&#x2F;&#x2F;员工id，可以是多个 status；&#x2F;&#x2F;状态：成功、失败、投递中 exchange； routekey；&#x2F;&#x2F;上述两个为mq要求字段 count；&#x2F;&#x2F;重试次数 trytime；&#x2F;&#x2F;重试时间 createtime；&#x2F;&#x2F;创建时间 updatetime；&#x2F;&#x2F;更新时间 」 3、场景：添加">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mq小记">
+<meta property="og:url" content="http://example.com/2021/05/12/mq%E5%B0%8F%E8%AE%B0/index.html">
+<meta property="og:site_name" content="小胖的博客">
+<meta property="og:description" content="消息传送可靠性1、数据库表：记录发送消息（发送失败时的重试依据） 2、实体类「 msgid；&#x2F;&#x2F;消息id Empid;&#x2F;&#x2F;员工id，可以是多个 status；&#x2F;&#x2F;状态：成功、失败、投递中 exchange； routekey；&#x2F;&#x2F;上述两个为mq要求字段 count；&#x2F;&#x2F;重试次数 trytime；&#x2F;&#x2F;重试时间 createtime；&#x2F;&#x2F;创建时间 updatetime；&#x2F;&#x2F;更新时间 」 3、场景：添加">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-12T10:17:58.000Z">
+<meta property="article:modified_time" content="2021-06-01T10:20:45.100Z">
+<meta property="article:author" content="PP">
+<meta property="article:tag" content="rabbitmq">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="小胖的博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">小胖的博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录备战秋招的点点滴滴</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">专栏</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-mq小记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/05/12/mq%E5%B0%8F%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2021-05-12T10:17:58.000Z" itemprop="datePublished">2021-05-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      mq小记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="消息传送可靠性"><a href="#消息传送可靠性" class="headerlink" title="消息传送可靠性"></a>消息传送可靠性</h2><p>1、数据库表：记录发送消息（发送失败时的重试依据）</p>
+<p>2、实体类「</p>
+<p>msgid；//消息id</p>
+<p>Empid;//员工id，可以是多个</p>
+<p>status；//状态：成功、失败、投递中</p>
+<p><strong>exchange；</strong></p>
+<p><strong>routekey；//上述两个为mq要求字段</strong></p>
+<p>count；//重试次数</p>
+<p>trytime；//重试时间</p>
+<p>createtime；//创建时间</p>
+<p>updatetime；//更新时间</p>
+<p>」</p>
+<p>3、场景：添加员工成功后，向该员工发送一条消息</p>
+<p>if(result==1){</p>
+<p>…</p>
+<p>数据库插入一条消息（id为uuid、重试时间（trytime）设置为一分钟后）//后面会设置定时任务，进行重试</p>
+<p>…</p>
+<p>//Rabbitmqtemplate.convertAndSend(“welcome”,emp);</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mailSendLogService.insert(mailSendLog);</span><br><span class="line">rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(msgId));</span><br></pre></td></tr></table></figure>
+
+<p>//CorrelationData(msgId)传入唯一标记符</p>
+<p>}</p>
+<p>4、重新定义rabbitconfig</p>
+<p>@Bean</p>
+<p>rabbittemplate rabbittemplate（）{</p>
+<p>​      new RabbitTEmplate(cachingConnectionFaction);//连接上rabbitmq,消息已经可以发了</p>
+<p>​     //需要确认消息有没有发送成功</p>
+<p>​     <strong>Rabbittemplate.setConfirmCallBack((data,ack,cause )-&gt;{.   //data：保存了消息的唯一id。ac k:消息是否发送成。</strong></p>
+<p>​           If(ack){. //发送成功</p>
+<p>​           Data.getid();//消息唯一id</p>
+<p>​           sou t（“消息发送成功”）;</p>
+<p>​           mailservice.更改数据库消息状态（msgid,status）；</p>
+<p>​      }esle{     //失败</p>
+<p>​       ……</p>
+<p>}</p>
+<p>​           <strong>//失败原因:可能是exchange到queue发送失败会有回调</strong></p>
+<p>​           <strong>rabbittemplate.setReturnCallback((msg,repcode,reptext,exchange,routingKey)-&gt;{</strong></p>
+<p>​        <strong>})</strong></p>
+<p>})</p>
+<p>};</p>
+<p>5、配置queue、exchange、mailbinding</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">Queue mailQueue() &#123;</span><br><span class="line">    return new Queue(MailConstants.MAIL_QUEUE_NAME, true);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Bean</span><br><span class="line">DirectExchange mailExchange() &#123;</span><br><span class="line">    return new DirectExchange(MailConstants.MAIL_EXCHANGE_NAME, true, false);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Bean</span><br><span class="line">Binding mailBinding() &#123;</span><br><span class="line">    return BindingBuilder.bind(mailQueue()).to(mailExchange()).with(MailConstants.MAIL_ROUTING_KEY_NAME);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>6、MailConstants定义常用变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class MailConstants &#123;</span><br><span class="line">    public static final Integer DELIVERING = 0;//消息投递中</span><br><span class="line">    public static final Integer SUCCESS = 1;//消息投递成功</span><br><span class="line">    public static final Integer FAILURE = 2;//消息投递失败</span><br><span class="line">    public static final Integer MAX_TRY_COUNT = 3;//最大重试次数</span><br><span class="line">    public static final Integer MSG_TIMEOUT = 1;//消息超时时间</span><br><span class="line">    public static final String MAIL_QUEUE_NAME = &quot;javaboy.mail.queue&quot;;</span><br><span class="line">    public static final String MAIL_EXCHANGE_NAME = &quot;javaboy.mail.exchange&quot;;</span><br><span class="line">    public static final String MAIL_ROUTING_KEY_NAME = &quot;javaboy.mail.routing.key&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="消息投递失败"><a href="#消息投递失败" class="headerlink" title="消息投递失败"></a>消息投递失败</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class MailSendTask &#123;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    MailSendLogService mailSendLogService;</span><br><span class="line">    @Autowired</span><br><span class="line">    RabbitTemplate rabbitTemplate;</span><br><span class="line">    @Autowired</span><br><span class="line">    EmployeeService employeeService;</span><br><span class="line">    </span><br><span class="line">    //定时任务：每隔十秒跑一次</span><br><span class="line">    @Scheduled(cron = &quot;0/10 * * * * ?&quot;)</span><br><span class="line">    public void mailResendTask() &#123;</span><br><span class="line">        //查询记录表</span><br><span class="line">        List&lt;MailSendLog&gt; logs = mailSendLogService.getMailSendLogsByStatus();//trytime要小于当前时间</span><br><span class="line">        if (logs == null || logs.size() == 0) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        //遍历</span><br><span class="line">        logs.forEach(mailSendLog-&gt;&#123;</span><br><span class="line">            if (mailSendLog.getCount() &gt;= 3) &#123;</span><br><span class="line">                mailSendLogService.updateMailSendLogStatus(mailSendLog.getMsgId(), 2);//直接设置该条消息发送失败</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                mailSendLogService.updateCount(mailSendLog.getMsgId(), new Date());</span><br><span class="line">                Employee emp = employeeService.getEmployeeById(mailSendLog.getEmpId());//拿到记录表里员工id对应员工信息，然后重试</span><br><span class="line">                rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(mailSendLog.getMsgId()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">publisher-returns: true</span><br><span class="line">publisher-confirm-type:</span><br></pre></td></tr></table></figure>
+
+<p>//开启confirm和return回调</p>
+<h2 id="监听"><a href="#监听" class="headerlink" title="监听"></a>监听</h2><p>1、开启队列接收</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.rabbitmq.listener.simple.acknowledge-mode=manual</span><br><span class="line">spring.rabbitmq.listener.simple.prefetch=100</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">public class MailserverApplication &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(MailserverApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    Queue queue() &#123;</span><br><span class="line">        return new Queue(MailConstants.MAIL_QUEUE_NAME);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、@listener</p>
+<ul>
+<li><p> @RabbitListener(queues = MailConstants.MAIL_QUEUE_NAME)</p>
+</li>
+<li><p>String msgId = (String) headers.get(“spring_returned_message_correlation”);</p>
+</li>
+<li><p>if (redisTemplate.opsForHash().entries(“mail_log”).containsKey(msgId)) {</p>
+<p> //redis 中包含该 key，说明该消息已经被消费过</p>
+<pre><code>        logger.info(msgId + &quot;:消息已经被消费&quot;);
+        channel.basicAck(tag, false);//确认消息已消费.  
+</code></pre>
+</li>
+</ul>
+<p>  ​            return;</p>
+<p>  }</p>
+<ul>
+<li></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">    @RabbitListener(queues = MailConstants.MAIL_QUEUE_NAME)</span><br><span class="line">    public void handler(Message message, Channel channel) throws IOException &#123;</span><br><span class="line">        Employee employee = (Employee) message.getPayload();</span><br><span class="line">        </span><br><span class="line">        MessageHeaders headers = message.getHeaders();</span><br><span class="line">        Long tag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);//消息标记</span><br><span class="line">        String msgId = (String) headers.get(&quot;spring_returned_message_correlation&quot;);//获取唯一标记</span><br><span class="line">        </span><br><span class="line">        if (redisTemplate.opsForHash().entries(&quot;mail_log&quot;).containsKey(msgId)) &#123;</span><br><span class="line">            //redis 中包含该 key，说明该消息已经被消费过</span><br><span class="line">            logger.info(msgId + &quot;:消息已经被消费&quot;);</span><br><span class="line">            channel.basicAck(tag, false);//确认消息已消费</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        //收到消息，发送邮件</span><br><span class="line">        MimeMessage msg = javaMailSender.createMimeMessage();</span><br><span class="line">        MimeMessageHelper helper = new MimeMessageHelper(msg);</span><br><span class="line">        try &#123;</span><br><span class="line">            helper.setTo(employee.getEmail());</span><br><span class="line">            helper.setFrom(mailProperties.getUsername());</span><br><span class="line">            helper.setSubject(&quot;入职欢迎&quot;);</span><br><span class="line">            helper.setSentDate(new Date());</span><br><span class="line">            Context context = new Context();</span><br><span class="line">            context.setVariable(&quot;name&quot;, employee.getName());</span><br><span class="line">            context.setVariable(&quot;posName&quot;, employee.getPosition().getName());</span><br><span class="line">            context.setVariable(&quot;joblevelName&quot;, employee.getJobLevel().getName());</span><br><span class="line">            context.setVariable(&quot;departmentName&quot;, employee.getDepartment().getName());</span><br><span class="line">            String mail = templateEngine.process(&quot;mail&quot;, context);</span><br><span class="line">            helper.setText(mail, true);</span><br><span class="line">            javaMailSender.send(msg);</span><br><span class="line">            redisTemplate.opsForHash().put(&quot;mail_log&quot;, msgId, &quot;javaboy&quot;);</span><br><span class="line">            channel.basicAck(tag, false);</span><br><span class="line">            logger.info(msgId + &quot;:邮件发送成功&quot;);</span><br><span class="line">        &#125; catch (MessagingException e) &#123;</span><br><span class="line">            channel.basicNack(tag, false, true);</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            logger.error(&quot;邮件发送失败：&quot; + e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="消息重复消费"><a href="#消息重复消费" class="headerlink" title="消息重复消费"></a>消息重复消费</h2><p>但是，在这样的机制下，又带来了新的问题，就是消息可能会重复投递，进而导致，消息重复消费，例如一个员工入职了，结果收到了两封入职欢迎邮件，这是不对的。</p>
+<h3 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h3><p>幂等性本身是数学上的概念，即使公式：f(x)=f(f(x)) 能够成立的数学性质。在开发领域，则表示对于同一个系统，使用相同的条件，一次请求和多次请求对系统资源的影响是一致的。</p>
+<p>在分布式系统中幂等性尤为重要，因为分布式系统中，我们经常会用到接口调用失败进而进行重试这个功能，这样就带来了对一个接口可能会使用相同的条件进行重复调用，在这样的条件下，保证接口的幂等性就尤为重要了。</p>
+<p>了解了问题，那么解决方案就很好整了，常见的方案有：</p>
+<ul>
+<li>MVCC</li>
+<li>Token 机制</li>
+<li>设计去重表</li>
+<li>…</li>
+</ul>
+<p>MVCC 是多版本并发控制，这种方式就是在数据更新的时候需要去比较所持有的数据版本号，版本号不一致的话，操作会失败，这样每个 version 就只有一次执行成功的机会，一旦失败了必须重新获取。</p>
+<p>Token 则是目前使用比较广的一种方式<strong>，核心思想就是每个操作都有一个唯一凭证 token</strong>，一旦执行成功，对于重复的请求，总是返回同一个结果。</p>
+<p>这里<strong>RabbitMQ 消费端</strong>实际上就是采用了 Token 这种方式。</p>
+<p>大致的思路是这样，<strong>首先将 RabbitMQ 的消息自动确认机制改为手动确认，然后每当有一条消息消费成功了，就把该消息的唯一 ID 记录在 Redis 上</strong>，然后每次收到消息时，都先去 Redis 上查看是否有该消息的 ID，如果有，表示该消息已经消费过了，不再处理，否则再去处理。</p>
+<h3 id="如果消息消费失败"><a href="#如果消息消费失败" class="headerlink" title="如果消息消费失败"></a>如果消息消费失败</h3><p>自动退回rabbitmq！！！</p>
+<p>比如执行时，抛出异常</p>
+<p>![image-20210601175411320](/Users/xyf/Library/Application Support/typora-user-images/image-20210601175411320.png)</p>
+<p>unacked为1</p>
+<p>重试就可能产生多次消费的问题！！！</p>
+<p> public void handler(Message message, Channel channel) throws IOException {</p>
+<p>}</p>
+<p><strong>channel用来手动确认消息是否消费成功</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Long tag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);//消息标记</span><br><span class="line"> String msgId = (String) headers.get(&quot;spring_returned_message_correlation&quot;);//获取唯一标记</span><br></pre></td></tr></table></figure>
+
+
+
+<p>邮件发送成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">channel.basicAck(tag, false);//确认消息已消费，fasle表示丢弃即可</span><br><span class="line"></span><br><span class="line">redisTemplate.opsForHash().put(&quot;mail_log&quot;, msgId, &quot;javaboy&quot;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 往Hash中存入数据</span><br><span class="line"> *</span><br><span class="line"> * @param key Redis键</span><br><span class="line"> * @param hKey Hash键</span><br><span class="line"> * @param value 值</span><br><span class="line"> */</span><br><span class="line">public &lt;T&gt; void setCacheMapValue(final String key, final String hKey, final T value)</span><br><span class="line">&#123;</span><br><span class="line">    redisTemplate.opsForHash().put(key, hKey, value);</span><br><span class="line">&#125;</span><br><span class="line">//取值</span><br><span class="line">opsForHash().entries(&quot;mail_log&quot;).containsKey(msgId)</span><br></pre></td></tr></table></figure>
+
+<p>邮件发送失败</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">channel.basicNack(tag, false, true);//true表示回到消息队列</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/05/12/mq%E5%B0%8F%E8%AE%B0/" data-id="ckpdw4fk10004v20t5zdo7279" data-title="mq小记" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rabbitmq/" rel="tag">rabbitmq</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/05/10/ThreadLocal%E5%B0%8F%E7%BB%93/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">ThreadLocal小结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring/">spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AOP/" rel="tag">AOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag">Java虚拟机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hashmap/" rel="tag">hashmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rabbitmq/" rel="tag">rabbitmq</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AOP/" style="font-size: 10px;">AOP</a> <a href="/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" style="font-size: 10px;">Java虚拟机</a> <a href="/tags/hashmap/" style="font-size: 10px;">hashmap</a> <a href="/tags/rabbitmq/" style="font-size: 10px;">rabbitmq</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">多线程</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/05/12/mq%E5%B0%8F%E8%AE%B0/">mq小记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/10/ThreadLocal%E5%B0%8F%E7%BB%93/">ThreadLocal小结</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/07/AOP%E5%BA%94%E7%94%A8/">AOP应用</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/05/%E5%85%B3%E4%BA%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">关于虚拟机中的垃圾回收</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/04/Redis/index/">HashMap</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 PP<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">专栏</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
