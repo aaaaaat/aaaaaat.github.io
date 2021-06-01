@@ -202,7 +202,7 @@
 <p>大致的思路是这样，<strong>首先将 RabbitMQ 的消息自动确认机制改为手动确认，然后每当有一条消息消费成功了，就把该消息的唯一 ID 记录在 Redis 上</strong>，然后每次收到消息时，都先去 Redis 上查看是否有该消息的 ID，如果有，表示该消息已经消费过了，不再处理，否则再去处理。</p>
 <h3 id="如果消息消费失败"><a href="#如果消息消费失败" class="headerlink" title="如果消息消费失败"></a>如果消息消费失败</h3><p>自动退回rabbitmq！！！</p>
 <p>比如执行时，抛出异常</p>
-<p>![image-20210601175411320](/Users/xyf/Library/Application Support/typora-user-images/image-20210601175411320.png)</p>
+<p><img src="https://i.loli.net/2021/06/01/cCkuLtoDrvUbVSZ.png" alt="image-20210601175411320.png"></p>
 <p>unacked为1</p>
 <p>重试就可能产生多次消费的问题！！！</p>
 <p> public void handler(Message message, Channel channel) throws IOException {</p>
@@ -224,7 +224,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/12/mq%E5%B0%8F%E8%AE%B0/" data-id="ckpdw4fk10004v20t5zdo7279" data-title="mq小记" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/12/mq%E5%B0%8F%E8%AE%B0/" data-id="ckpe515zz0006zu0t7t1tflkn" data-title="mq小记" class="article-share-link">分享</a>
       
       
       
@@ -291,7 +291,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/10/ThreadLocal%E5%B0%8F%E7%BB%93/" data-id="ckpdw4fjx0001v20t41di1yc0" data-title="ThreadLocal小结" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/10/ThreadLocal%E5%B0%8F%E7%BB%93/" data-id="ckpe515zx0004zu0tbd1g3cjl" data-title="ThreadLocal小结" class="article-share-link">分享</a>
       
       
       
@@ -376,7 +376,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/07/AOP%E5%BA%94%E7%94%A8/" data-id="ckpdw4fjp0000v20tht4z9vex" data-title="AOP应用" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/07/AOP%E5%BA%94%E7%94%A8/" data-id="ckpe515zp0000zu0tfdenhcen" data-title="AOP应用" class="article-share-link">分享</a>
       
       
       
@@ -438,7 +438,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/05/%E5%85%B3%E4%BA%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" data-id="ckpdw4fk30006v20t3bz3dgq6" data-title="关于虚拟机中的垃圾回收" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/05/%E5%85%B3%E4%BA%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" data-id="ckpe515zy0005zu0tblvl2psq" data-title="关于虚拟机中的垃圾回收" class="article-share-link">分享</a>
       
       
       
@@ -555,7 +555,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/04/Redis/index/" data-id="ckpdw4fk4000av20tbqrv76xt" data-title="HashMap" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/04/Redis/index/" data-id="ckpe51600000azu0thodw5nla" data-title="HashMap" class="article-share-link">分享</a>
       
       
       
@@ -624,7 +624,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" data-id="ckpdw4fk20005v20tabkc8cw4" data-title="MYSQL事务小记" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/05/01/MYSQL%E4%BA%8B%E5%8A%A1%E5%B0%8F%E8%AE%B0/" data-id="ckpe515zu0001zu0tc7b396bb" data-title="MYSQL事务小记" class="article-share-link">分享</a>
       
       
       
