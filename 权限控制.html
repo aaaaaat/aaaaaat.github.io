@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>小胖的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="1.表达式控制 URL 路径权限首先我们来看第一种，就是通过表达式控制 URL 路径权限。 Spring Security 支持在 URL 和方法权限控制时使用 SpEL 表达式，如果表达式返回值为 true 则表示需要对应的权限，否则表示不需要对应的权限。提供表达式的类是 SecurityExpressionRoot SecurityExpressionRoot 有两个实现类，表示在应对 URL">
+<meta property="og:type" content="website">
+<meta property="og:title" content="小胖的博客">
+<meta property="og:url" content="http://example.com/%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6.html">
+<meta property="og:site_name" content="小胖的博客">
+<meta property="og:description" content="1.表达式控制 URL 路径权限首先我们来看第一种，就是通过表达式控制 URL 路径权限。 Spring Security 支持在 URL 和方法权限控制时使用 SpEL 表达式，如果表达式返回值为 true 则表示需要对应的权限，否则表示不需要对应的权限。提供表达式的类是 SecurityExpressionRoot SecurityExpressionRoot 有两个实现类，表示在应对 URL">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-02T13:55:58.597Z">
+<meta property="article:modified_time" content="2021-06-02T13:55:58.590Z">
+<meta property="article:author" content="PP">
+<meta property="article:tag" content="随心笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="小胖的博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">小胖的博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录备战秋招的点点滴滴</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/">主页</a>
+        
+          <a class="main-nav-link" href="/archives">专栏</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6.html" class="article-date">
+  <time class="dt-published" datetime="2021-06-02T13:55:58.597Z" itemprop="datePublished">2021-06-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="1-表达式控制-URL-路径权限"><a href="#1-表达式控制-URL-路径权限" class="headerlink" title="1.表达式控制 URL 路径权限"></a>1.表达式控制 URL 路径权限</h2><p>首先我们来看第一种，就是通过表达式控制 URL 路径权限。</p>
+<p>Spring Security 支持在 URL 和方法权限控制时使用 <strong>SpEL 表达式</strong>，如果表达式返回值为 true 则表示需要对应的权限，否则表示不需要对应的权限。提供表达式的类是 SecurityExpressionRoot</p>
+<p>SecurityExpressionRoot 有两个实现类，表示在应对 URL 权限控制和应对方法权限控制时，分别对 SpEL 所做的拓展，例如<strong>在基于 URL 路径做权限控制时，增加了 hasIpAddress 选项。</strong></p>
+<p>如果是通过 URL 进行权限控制，那么我们只需要按照如下方式配置即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    http.authorizeRequests()</span><br><span class="line">            .antMatchers(<span class="string">&quot;/admin/**&quot;</span>).hasRole(<span class="string">&quot;admin&quot;</span>)</span><br><span class="line">            .antMatchers(<span class="string">&quot;/user/**&quot;</span>).hasAnyRole(<span class="string">&quot;admin&quot;</span>, <span class="string">&quot;user&quot;</span>)</span><br><span class="line">            .anyRequest().authenticated()</span><br><span class="line">            .and()</span><br><span class="line">            ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里表示访问 <code>/admin/**</code> 格式的路径需要 admin 角色，访问 <code>/user/**</code> 格式的路径需要 admin 或者 user 角色。</p>
+<h2 id="2-表达式控制方法权限"><a href="#2-表达式控制方法权限" class="headerlink" title="2.表达式控制方法权限"></a>2.表达式控制方法权限</h2><p>当然，我们也可以通过在方法上添加注解来控制权限。</p>
+<p>在方法上添加注解控制权限，需要我们首先开启注解的使用，在 Spring Security 配置类上添加如下内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityConfig</span> <span class="keyword">extends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个配置开启了三个注解，分别是：</p>
+<ul>
+<li>@PreAuthorize：方法执行前进行权限检查</li>
+<li>@PostAuthorize：方法执行后进行权限检查</li>
+<li>@Secured：类似于 @PreAuthorize</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@PreAuthorize(&quot;principal.username.equals(&#x27;javaboy&#x27;)&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PreAuthorize(&quot;hasRole(&#x27;admin&#x27;)&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">admin</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;admin&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Secured(&#123;&quot;ROLE_user&quot;&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">user</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;user&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PreAuthorize(&quot;#age&gt;98&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAge</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> String.valueOf(age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>第一个 hello 方法，注解的约束是，只有当前登录用户名为 javaboy 的用户才可以访问该方法。</li>
+<li>第二个 admin 方法，表示访问该方法的用户必须具备 admin 角色。</li>
+<li>第三个 user 方法，表示方法该方法的用户必须具备 user 角色，但是注意 user 角色需要加上 <code>ROLE_</code> 前缀。</li>
+<li><strong>第四个 getAge 方法，表示访问该方法的 age 参数必须大于 98，否则请求不予通过。</strong></li>
+</ol>
+<p>可以看到，这里的表达式还是非常丰富，如果想引用方法的参数，前面加上一个 <code>#</code> 即可，既可以引用基本类型的参数，也可以引用对象参数。</p>
+<p>缺省对象除了 principal ，还有 authentication</p>
+<h2 id="3-使用过滤注解"><a href="#3-使用过滤注解" class="headerlink" title="3.使用过滤注解"></a>3.使用过滤注解</h2><p>Spring Security 中还有两个过滤函数 @PreFilter 和 @PostFilter，可以根据给出的条件，自动移除集合中的元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostFilter(&quot;filterObject.lastIndexOf(&#x27;2&#x27;)!=-1&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getAllUser</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        users.add(<span class="string">&quot;javaboy:&quot;</span> + i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> users;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@PreFilter(filterTarget = &quot;ages&quot;,value = &quot;filterObject%2==0&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getAllAge</span><span class="params">(List&lt;Integer&gt; ages,List&lt;String&gt; users)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;ages = &quot;</span> + ages);</span><br><span class="line">    System.out.println(<span class="string">&quot;users = &quot;</span> + users);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在 getAllUser 方法中，对集合进行过滤，只返回后缀为 2 的元素，filterObject 表示要过滤的元素对象。</li>
+<li>在 getAllAge 方法中，由于有两个集合，因此使用 filterTarget 指定过滤对象。</li>
+</ul>
+<h2 id="4-动态权限"><a href="#4-动态权限" class="headerlink" title="4.动态权限"></a>4.动态权限</h2><p>动态权限主要通过重写拦截器和决策器来实现</p>
+<h1 id="各种类型权限实现原理（ruo-yi）"><a href="#各种类型权限实现原理（ruo-yi）" class="headerlink" title="各种类型权限实现原理（ruo yi）"></a>各种类型权限实现原理（ruo yi）</h1><h3 id="1-菜单权限"><a href="#1-菜单权限" class="headerlink" title="1.菜单权限"></a>1.菜单权限</h3><p>菜单权限很简单，实际上就是简单的用户-角色-菜单模型，那么菜单是什么时候加载的呢？<code>ruoyi-ui\src\permission.js</code>，加载的逻辑在这个文件中。</p>
+<p><code>permission.js</code>文件中设置了<a target="_blank" rel="noopener" href="https://router.vuejs.org/zh/guide/advanced/navigation-guards.html">导航守卫</a>，每次路由发生变化的时候就会<strong>触发router.beforeEach的回调函数。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">router.beforeEach((to, from, next) =&gt; &#123;</span><br><span class="line">  NProgress.start()</span><br><span class="line">  if (getToken()) &#123;</span><br><span class="line">    /* has token*/</span><br><span class="line">    if (to.path === &#x27;/login&#x27;) &#123;</span><br><span class="line">      next(&#123; path: &#x27;/&#x27; &#125;)</span><br><span class="line">      NProgress.done()</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      if (store.getters.roles.length === 0) &#123;</span><br><span class="line">        // 判断当前用户是否已拉取完user_info信息</span><br><span class="line">        store.dispatch(&#x27;GetInfo&#x27;).then(res =&gt; &#123;</span><br><span class="line">          // 拉取user_info</span><br><span class="line">          const roles = res.roles</span><br><span class="line">          store.dispatch(&#x27;GenerateRoutes&#x27;, &#123; roles &#125;).then(accessRoutes =&gt; &#123;</span><br><span class="line">            // 根据roles权限生成可访问的路由表</span><br><span class="line">            router.addRoutes(accessRoutes) // 动态添加可访问路由表</span><br><span class="line">            next(&#123; ...to, replace: true &#125;) // hack方法 确保addRoutes已完成</span><br><span class="line">          &#125;)</span><br><span class="line">        &#125;).catch(err =&gt; &#123;</span><br><span class="line">            store.dispatch(&#x27;LogOut&#x27;).then(() =&gt; &#123;</span><br><span class="line">              Message.error(err)</span><br><span class="line">              next(&#123; path: &#x27;/&#x27; &#125;)</span><br><span class="line">            &#125;)</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        next()</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // 没有token</span><br><span class="line">    if (whiteList.indexOf(to.path) !== -1) &#123;</span><br><span class="line">      // 在免登录白名单，直接进入</span><br><span class="line">      next()</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      next(`/login?redirect=$&#123;to.fullPath&#125;`) // 否则全部重定向到登录页</span><br><span class="line">      NProgress.done()</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>注意`if (store.getters.roles.length === 0) 这段逻辑，可以看出，<strong>如果不刷新当前页面</strong>，就算给用户添加了新的菜单权限，用户也看不到新的菜单。</p>
+<h3 id="2-按钮权限"><a href="#2-按钮权限" class="headerlink" title="2.按钮权限"></a>2.按钮权限</h3><p>按钮权限设置上和菜单权限基本上是一样的，是附着于页面中的细粒度权限。按钮权限体现在如果用户没有相应的权限，则看不到相关的按钮。这个是咋实现的呢？</p>
+<p>先看下系统管理下的菜单管理中的修改、新增和删除按钮前端vue代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;el-table-column label=&quot;操作&quot; align=&quot;center&quot; class-name=&quot;small-padding fixed-width&quot;&gt;</span><br><span class="line">        &lt;template slot-scope=&quot;scope&quot;&gt;</span><br><span class="line">          &lt;el-button size=&quot;mini&quot; </span><br><span class="line">            type=&quot;text&quot; </span><br><span class="line">            icon=&quot;el-icon-edit&quot; </span><br><span class="line">            @click=&quot;handleUpdate(scope.row)&quot;</span><br><span class="line">            v-hasPermi=&quot;[&#x27;system:menu:edit&#x27;]&quot;</span><br><span class="line">          &gt;修改&lt;/el-button&gt;</span><br><span class="line">          &lt;el-button </span><br><span class="line">            size=&quot;mini&quot; </span><br><span class="line">            type=&quot;text&quot; </span><br><span class="line">            icon=&quot;el-icon-plus&quot; </span><br><span class="line">            @click=&quot;handleAdd(scope.row)&quot;</span><br><span class="line">            v-hasPermi=&quot;[&#x27;system:menu:add&#x27;]&quot;</span><br><span class="line">          &gt;新增&lt;/el-button&gt;</span><br><span class="line">          &lt;el-button</span><br><span class="line">            size=&quot;mini&quot;</span><br><span class="line">            type=&quot;text&quot;</span><br><span class="line">            icon=&quot;el-icon-delete&quot;</span><br><span class="line">            @click=&quot;handleDelete(scope.row)&quot;</span><br><span class="line">            v-hasPermi=&quot;[&#x27;system:menu:remove&#x27;]&quot;</span><br><span class="line">          &gt;删除&lt;/el-button&gt;</span><br><span class="line">        &lt;/template&gt;</span><br><span class="line">      &lt;/el-table-column&gt;</span><br></pre></td></tr></table></figure>
+
+<p>el-button上有个属性<code>v-hasPermi</code>，这实际上是vue的自定义指令，属性值就是创建按钮的时候定义的那个<code>权限标志</code>。其定义在<code>src/directive/permission/index.js</code>文件</p>
+<p>文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import hasRole from &#x27;./hasRole&#x27;</span><br><span class="line">import hasPermi from &#x27;./hasPermi&#x27;</span><br><span class="line"></span><br><span class="line">const install = function(Vue) &#123;</span><br><span class="line">  Vue.directive(&#x27;hasRole&#x27;, hasRole)</span><br><span class="line">  Vue.directive(&#x27;hasPermi&#x27;, hasPermi)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (window.Vue) &#123;</span><br><span class="line">  window[&#x27;hasRole&#x27;] = hasRole</span><br><span class="line">  window[&#x27;hasPermi&#x27;] = hasPermi</span><br><span class="line">  Vue.use(install); // eslint-disable-line</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export default install</span><br></pre></td></tr></table></figure>
+
+<p>其具体实现逻辑就在同目录的<code>hasPermi.js</code>文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import store from &#x27;@/store&#x27;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  inserted(el, binding, vnode) &#123;</span><br><span class="line">    const &#123; value &#125; = binding</span><br><span class="line">    const all_permission = &quot;*:*:*&quot;;</span><br><span class="line">    const permissions = store.getters &amp;&amp; store.getters.permissions</span><br><span class="line"></span><br><span class="line">    if (value &amp;&amp; value instanceof Array &amp;&amp; value.length &gt; 0) &#123;</span><br><span class="line">      const permissionFlag = value</span><br><span class="line"></span><br><span class="line">      const hasPermissions = permissions.some(permission =&gt; &#123;</span><br><span class="line">        return all_permission === permission || permissionFlag.includes(permission)</span><br><span class="line">      &#125;)</span><br><span class="line"></span><br><span class="line">      if (!hasPermissions) &#123;</span><br><span class="line">        el.parentNode &amp;&amp; el.parentNode.removeChild(el)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      throw new Error(`请设置操作权限标签值`)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意代码<code>el.parentNode &amp;&amp; el.parentNode.removeChild(el)</code>，可以看到，如果没有按钮权限，则会将按钮本身从dom中移除。</p>
+<h3 id="3-接口权限-可以使用重写拦截器和决策器实现动态接口权限"><a href="#3-接口权限-可以使用重写拦截器和决策器实现动态接口权限" class="headerlink" title="3.接口权限(可以使用重写拦截器和决策器实现动态接口权限)"></a>3.接口权限(可以使用重写拦截器和决策器实现动态接口权限)</h3><p>接口权限和前端的按钮权限一一对应。为的是防止用户绕过按钮直接请求后端接口获取数据。在若依Vue系统中，是使用SpringSecurity的注解<code>@PreAuthorize</code>实现的。</p>
+<p>虽然只是一个注解，但是它是SpringSecurity+JWT集成的结晶</p>
+<h3 id="4-数据权限"><a href="#4-数据权限" class="headerlink" title="4.数据权限"></a>4.数据权限</h3><p>数据权限实现的关键在于<code>com.ruoyi.framework.aspectj.DataScopeAspect</code>类。该类是一个切面类，凡是加上<code>com.ruoyi.common.annotation.DataScope</code>注解的方法，在执行的时候都会被它拦截。</p>
+<p>该切面定义了五种权限范围:</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>code</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DATA_SCOPE_ALL</td>
+<td>1</td>
+<td>全部数据权限</td>
+</tr>
+<tr>
+<td>DATA_SCOPE_CUSTOM</td>
+<td>2</td>
+<td>自定数据权限</td>
+</tr>
+<tr>
+<td>DATA_SCOPE_DEPT</td>
+<td>3</td>
+<td>部门数据权限</td>
+</tr>
+<tr>
+<td>DATA_SCOPE_DEPT_AND_CHILD</td>
+<td>4</td>
+<td>部门及以下数据权限</td>
+</tr>
+<tr>
+<td>DATA_SCOPE_SELF</td>
+<td>5</td>
+<td>仅本人数据权限</td>
+</tr>
+</tbody></table>
+<p>该切面的核心逻辑是“拼SQL”，方法执行之前，会给参数的一个params属性添加一个dataScope键值对，key为”dataScope”，值为<code>AND (&quot; + sqlString.substring(4) + &quot;)&quot;</code>样式的一段SQL，这段SQL会根据当前用户所在的部门以及当前用户角色的权限范围发生变化。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">StringBuilder sqlString = new StringBuilder();</span><br><span class="line">        for (SysRole role : user.getRoles())</span><br><span class="line">        &#123;</span><br><span class="line">            String dataScope = role.getDataScope();</span><br><span class="line">            if (DATA_SCOPE_ALL.equals(dataScope))</span><br><span class="line">            &#123;</span><br><span class="line">                sqlString = new StringBuilder();</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">            else if (DATA_SCOPE_CUSTOM.equals(dataScope))</span><br><span class="line">            &#123;</span><br><span class="line">                sqlString.append(StringUtils.format(</span><br><span class="line">                        &quot; OR &#123;&#125;.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = &#123;&#125; ) &quot;, deptAlias,</span><br><span class="line">                        role.getRoleId()));</span><br><span class="line">            &#125;</span><br><span class="line">            else if (DATA_SCOPE_DEPT.equals(dataScope))</span><br><span class="line">            &#123;</span><br><span class="line">                sqlString.append(StringUtils.format(&quot; OR &#123;&#125;.dept_id = &#123;&#125; &quot;, deptAlias, user.getDeptId()));</span><br><span class="line">            &#125;</span><br><span class="line">            else if (DATA_SCOPE_DEPT_AND_CHILD.equals(dataScope))</span><br><span class="line">            &#123;</span><br><span class="line">                sqlString.append(StringUtils.format(</span><br><span class="line">                        &quot; OR &#123;&#125;.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = &#123;&#125; or find_in_set( &#123;&#125; , ancestors ) )&quot;,</span><br><span class="line">                        deptAlias, user.getDeptId(), user.getDeptId()));</span><br><span class="line">            &#125;</span><br><span class="line">            else if (DATA_SCOPE_SELF.equals(dataScope))</span><br><span class="line">            &#123;</span><br><span class="line">                if (StringUtils.isNotBlank(userAlias))</span><br><span class="line">                &#123;</span><br><span class="line">                    sqlString.append(StringUtils.format(&quot; OR &#123;&#125;.user_id = &#123;&#125; &quot;, userAlias, user.getUserId()));</span><br><span class="line">                &#125;</span><br><span class="line">                else</span><br><span class="line">                &#123;</span><br><span class="line">                    // 数据权限为仅本人且没有userAlias别名不查询任何数据</span><br><span class="line">                    sqlString.append(&quot; OR 1=0 &quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单来说，这段代码的逻辑就是用户所在的部门权限越高，数据权限范围越大，查出来的结果集将会越大。</p>
+<p>DataScope注解分别加到了部门列表查询、角色列表查询、用户列表查询的接口上，很明显，这几个接口需要根据不同的人查出不同的结果。</p>
+<p>以用户列表查询为例，执行sql为</p>
+<if test="deptId != null and deptId != 0">         
+
+<p>AND (u.dept_id = #{deptId} OR u.dept_id IN </p>
+<p>( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, ancestors) )</p>
+<p>)     </p>
+</if>     
+
+<!-- 数据范围过滤 -->     
+
+<p>${params.dataScope}</p>
+ </select>
+
+<p>其中，有这么一段代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;!-- 数据范围过滤 --&gt;</span><br><span class="line">$&#123;params.dataScope&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上<code>DataScopeAspect</code>切面就只干了填充params的dataScope属性这么一件事情。</p>
+<h2 id="若依Vue系统SpringSecurity-JWT"><a href="#若依Vue系统SpringSecurity-JWT" class="headerlink" title="若依Vue系统SpringSecurity+JWT"></a>若依Vue系统SpringSecurity+JWT</h2><p>若依Vue系统中从用户登录到后端接口权限校验，都是基于SpringSecurity+JWT实现的，其中，SpringSecurity是核心，jwt只是为了保证token合法性的一种手段（签名防止篡改）。spring security集成的相关代码在<code>ruoyi-framework</code>模块的<code>com.ruoyi.framework.security</code>包以及<code>com.ruoyi.framework.config.SecurityConfig</code>类中。</p>
+<p><code>SecurityConfig</code>是核心配置类，所有的配置均在该类中。</p>
+<h3 id="1-用户登录"><a href="#1-用户登录" class="headerlink" title="1.用户登录"></a>1.用户登录</h3><p>用户登录的逻辑在方法<code>com.ruoyi.web.controller.system.SysLoginController#login</code>中，一个典型的登录请求体如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	&quot;username&quot;: &quot;admin&quot;,</span><br><span class="line">	&quot;password&quot;: &quot;admin123&quot;,</span><br><span class="line">	&quot;code&quot;: &quot;0&quot;,</span><br><span class="line">	&quot;uuid&quot;: &quot;a9fdbcbcb28748b796b5b77ad71bbb97&quot; //uuid由验证码返回</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>username和password分别是用户名和密码，code为验证码，uuid为验证码的唯一标识。登录成功之后会返回前端一个jwt令牌</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	&quot;msg&quot;: &quot;操作成功&quot;,</span><br><span class="line">	&quot;code&quot;: 200,</span><br><span class="line">	&quot;token&quot;: &quot;eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjIzZjRhNjJjLTY5NzMtNDcxZS04ZmU4LWJmYWQ4YzllNWFkMiJ9.9d3iIaNq62CkjTXlxFOQgdDMOAZiu5tAsEn0cEuV23opT6PAqu_CiaN7kQY8_XhlQrHX5RgZ2bH7LpsiKLLcSw&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在登录方法中，做了以下几件事情：</p>
+<ul>
+<li>根据uuid获取redis中的验证码并对请求的验证码做验证</li>
+<li>如果验证码没问题，则对用户名和密码进行校验</li>
+<li>如果用户名和密码校验成功，<strong>则使用token作为key将用户信息保存到redis</strong></li>
+<li><strong>使用jwt对token签名「将playload（登录信息-密码除外，包含用户的一些信息及过期时间等）和header（包含算法信息）」并返回前端</strong></li>
+</ul>
+<p>在整个过程中，会抛出一些自定义异常，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">throw new CaptchaExpireException();</span><br><span class="line">throw new CaptchaException();</span><br><span class="line">throw new UserPasswordNotMatchException();</span><br><span class="line">throw new CustomException(e.getMessage());</span><br></pre></td></tr></table></figure>
+
+<p>这些异常最终会被全局异常处理器处理掉：<code>com.ruoyi.framework.web.exception.GlobalExceptionHandler</code></p>
+<h3 id="2-接口权限校验"><a href="#2-接口权限校验" class="headerlink" title="2.接口权限校验"></a>2.接口权限校验</h3><p><strong>前端请求完成登录接口之后会将token存储到cookie</strong>，key为Admin-Token，value是jwt令牌。登录逻辑：<code>user.actions.Login</code>。</p>
+<p>之后，每次请求后端接口的时候都会带上Authentication Header</p>
+<p>这实际上是通过axios的请求拦截器实现的：详情可见<code>src/utils/request.js</code>文件</p>
+<p>带着Authentication Header的请求打到后端的时候会经过过滤器<code>com.ruoyi.framework.security.filter.JwtAuthenticationTokenFilter</code>，该过滤器做了以下几件事情</p>
+<ul>
+<li>从请求头中取出jwt令牌，并对其进行jwt验签（验证签名的有效性），<strong>验签若是成功，则取出原始token</strong></li>
+<li><strong>根据token从redis中取出用户数据</strong></li>
+<li>将用户信息封装成<code>UsernamePasswordAuthenticationToken</code>对象，并将该对象填充到Spring Security上下文中</li>
+</ul>
+<p>填充到SpringSecurity上下文才能让Controller接口上的<code>@PreAuthorize</code>注解发挥作用（<strong>存疑，这里若依作者并非使用原生的SpringSecurity提供的spel表达式，也没有用authorities，而是使用了PermissionService类</strong>）。</p>
+<p>接着，Controller接口正式执行之前会进入<code>com.ruoyi.framework.web.service.PermissionService#hasPermi</code>方法判定权限，<strong>这里重新从redis中取出用户数据并进行权限校验</strong>，权限校验失败则不再执行接口中逻辑（<strong>存疑，这里并没有使用SpringSecurity上下文中的用户数据，那么<code>JwtAuthenticationTokenFilter</code>中的用户信息填充上下文中的代码是干啥用的</strong>）。</p>
+<h4 id="验签"><a href="#验签" class="headerlink" title="验签"></a>验签</h4><p>验证过程：把前端存到header里面的token解析成一个Claims对象获取参数验证（当时间过了设置的token失效时间，这个对象就失效为null，也就未登录）</p>
+<p>创建令牌</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">String token = IdUtils.fastUUID();</span><br><span class="line"></span><br><span class="line">loginUser.setToken(token);</span><br><span class="line">setUserAgent(loginUser);</span><br><span class="line">refreshToken(loginUser);</span><br><span class="line"></span><br><span class="line">Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</span><br><span class="line">claims.put(Constants.LOGIN_USER_KEY, token); //token是IdUtils.fastUUID()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 刷新令牌有效期</span><br><span class="line"> * </span><br><span class="line"> * @param loginUser 登录信息</span><br><span class="line"> */</span><br><span class="line">public void refreshToken(LoginUser loginUser)</span><br><span class="line">&#123;</span><br><span class="line">    loginUser.setLoginTime(System.currentTimeMillis());</span><br><span class="line">    loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);</span><br><span class="line"></span><br><span class="line">    // 根据uuid将loginUser缓存</span><br><span class="line">    String userKey = getTokenKey(loginUser.getToken());</span><br><span class="line">    redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">//验证</span><br><span class="line">LoginUser loginUser = tokenService.getLoginUser(request);//获取token中loginuser</span><br><span class="line">if (StringUtils.isNotNull(loginUser) &amp;&amp; StringUtils.isNull(SecurityUtils.getAuthentication()))</span><br><span class="line">&#123;</span><br><span class="line">    tokenService.verifyToken(loginUser);</span><br><span class="line">    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());</span><br><span class="line">    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span><br><span class="line">    SecurityContextHolder.getContext().setAuthentication(authenticationToken);</span><br><span class="line">&#125;</span><br><span class="line">chain.doFilter(request, response);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 获取请求携带的令牌</span><br><span class="line">String token = getToken(request);</span><br><span class="line">if (StringUtils.isNotEmpty(token))</span><br><span class="line">&#123;</span><br><span class="line">    Claims claims = parseToken(token);</span><br><span class="line">    // 解析对应的权限以及用户信息</span><br><span class="line">    String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);</span><br><span class="line">    String userKey = getTokenKey(uuid);</span><br><span class="line">    LoginUser user = redisCache.getCacheObject(userKey);</span><br><span class="line">    return user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完结！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6.html" data-id="ckpfj9gkg000qcm0t62js8y1e" data-title="" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java%E5%9F%BA%E7%A1%80/">Java基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/spring/">spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AOP/" rel="tag">AOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag">Java虚拟机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hashmap/" rel="tag">hashmap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rabbitmq/" rel="tag">rabbitmq</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/votile/" rel="tag">votile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="tag">多线程</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AOP/" style="font-size: 10px;">AOP</a> <a href="/tags/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" style="font-size: 10px;">Java虚拟机</a> <a href="/tags/hashmap/" style="font-size: 20px;">hashmap</a> <a href="/tags/rabbitmq/" style="font-size: 10px;">rabbitmq</a> <a href="/tags/votile/" style="font-size: 10px;">votile</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 20px;">多线程</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/06/02/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/12/mq%E5%B0%8F%E8%AE%B0/">mq小记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/10/ThreadLocal%E5%B0%8F%E7%BB%93/">ThreadLocal小结</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/07/AOP%E5%BA%94%E7%94%A8/">AOP应用</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/05/%E5%85%B3%E4%BA%8E%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">关于虚拟机中的垃圾回收</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 PP<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/" class="mobile-nav-link">主页</a>
+  
+    <a href="/archives" class="mobile-nav-link">专栏</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
